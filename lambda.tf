@@ -47,7 +47,7 @@ resource "aws_lambda_function" "security_checker" {
   handler          = "lambda_function.lambda_handler"
   role             = aws_iam_role.lambda_exec_role.arn
   filename         = "lambda_function.zip"
-  source_code_hash = filebase64sha256("lambda_function.zip")
+  source_code_hash = filebase64sha256("lambda/lambda_function.zip")
 
   environment {
     variables = {

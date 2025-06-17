@@ -1,0 +1,50 @@
+import boto3
+import datetime
+
+ec2 = boto3.client('ec2')
+
+def check_ec2(event):
+    sg_response = ec2.describe_security_groups()
+    instance_response = ec2.describe_instances()
+    
+    findings = []
+    sg_to_instance = {}
+
+    for reservation in instance_response['Reservations']:
+        for instance in reservation['Instances']:
+           instance_id = instance['InstanceId']
+           instance_name = ''
+        for tag in instance['Tags']:
+             if tag['Key'] == 'Name':
+                instance_name = tag['Value']
+        for sg in instance['SecurityGroups']:
+                sg_id = sg['GroupId']
+                if sg_id not in sg_to_instance:
+                    sg_to_instance[sg_id] = []
+                sg_to_instance[sg_id].append({
+                    "Instance ID": instance_id, 
+                    "Instance Name": instance_name
+                })
+
+    for sg in sg_response['SecurityGroups']:
+        sg_id = sg['GroupId']
+        sg_name = sg['GroupName']
+        open = False
+
+        for perm in sg['IpPermissions']:
+            from_port = perm.get('FromPort')
+            to_port = perm.get('ToPort')
+            if from_port == 22 and to_port == 22:
+                for ip_range in perm['IpRanges']:
+                    if ip_range['CidrIp'] == '0.0.0.0/0':
+                        open = True
+                        attached_instances = sg_to_instance.get(sg_id, [])
+                        for i in attached_instances:
+                            findings.append({
+                                "ResourceId": sg_id,
+                                "CheckType": "SSHOpenToInternet",
+                                "Passed": False,
+                                "Details": f"Open to Internet: {i['Instance ID']}",
+                                "Timestamp": datetime.datetime.utcnow().isoformat()
+                            })
+    return findings 

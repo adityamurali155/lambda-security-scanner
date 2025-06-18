@@ -28,6 +28,9 @@ resource "aws_iam_policy" "lambda_security_policy"{
             "s3:ListBucket",
             "dynamodb:PutItem",
             "sns:Publish",
+            "kms:Encrypt",
+            "kms:Decrypt",
+            "kms:GenerateDataKey",
             "logs:CreateLogGroup",
             "logs:CreateLogStream",
             "logs:PutLogEvents"

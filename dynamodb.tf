@@ -7,4 +7,8 @@ resource "aws_dynamodb_table" "security_findings_table" {
         name = "ResourceId"
         type = "S"
     }
+    server_side_encryption {
+        enabled     = true
+        kms_key_arn = aws_kms_key.dynamodb_key.arn
+    }
 }

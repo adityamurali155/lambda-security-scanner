@@ -51,4 +51,4 @@ terraform apply
 
 ## 🛠️ Architecture Diagram
 
-![Event Driven Lambda Architecture](./assets/event-driven-lambda.png)
+![Event Driven Lambda Architecture](./assets/event-driven-lambda.gif)

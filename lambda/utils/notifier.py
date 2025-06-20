@@ -6,7 +6,7 @@ sns = boto3.client('sns')
 
 sns_topic_arn = os.environ['SNS_TOPIC_ARN']
 
-def publish_alert(finding):
+def send_alert(finding):
     message = {
         "Alert": "Security Alert!",
         "Resource": finding["ResourceId"],

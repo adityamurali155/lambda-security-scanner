@@ -12,16 +12,17 @@ def lambda_handler(event, context):
     findings = []
 
     if resource_type == "s3":
-        findings = s3_checks.check_s3(event)
+        findings += s3_checks.check_s3(event)
+    if resource_type == "ebs":
+        findings += ec2_checks.check_ebs(event)
     if resource_type == "ec2":
-        findings = ec2_checks.check_ec2(event)
+        findings += ec2_checks.check_ec2(event)
     if resource_type == "rds":
-        findings = rds_checks.check_rds(event)
+        findings += rds_checks.check_rds(event)
 
     for finding in findings:
         table.put_item(Item=finding)
         if not finding['Passed']:
-            print('Alert the goddamn life')
             send_alert(finding)
     print("Received event", json.dumps(event))
 
@@ -30,10 +31,15 @@ def lambda_handler(event, context):
 
 def identify_resource_type(event):
     source = event.get("source", "")
+    event_name = event.get("detail", {}).get("eventName", "").lower()
+
     if "s3" in source:
         return "s3"
     elif "ec2" in source:
-        return "ec2"
+        if any(x in event_name for x in ["createvolume", "deletevolume", "modifyvolume", "attachvolume", "detachvolume"]):
+            return "ebs"
+        else:
+            return "ec2"
     elif "rds" in source:
         return "rds"
     return None

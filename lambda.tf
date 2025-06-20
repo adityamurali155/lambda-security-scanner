@@ -26,6 +26,7 @@ resource "aws_iam_policy" "lambda_security_policy"{
             "rds:DescribeDBInstances",
             "s3:GetBucket*",
             "s3:ListBucket",
+            "s3:ListAllMyBuckets",
             "dynamodb:PutItem",
             "sns:Publish",
             "kms:Encrypt",

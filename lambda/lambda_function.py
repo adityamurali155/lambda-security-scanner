@@ -1,6 +1,6 @@
 import boto3
 import json
-from checks import s3_checks, ec2_checks, rds_checks
+from checks import s3_checks, ec2_checks, ebs_checks, rds_checks
 from utils.notifier import send_alert
 
 def lambda_handler(event, context):
@@ -14,7 +14,7 @@ def lambda_handler(event, context):
     if resource_type == "s3":
         findings += s3_checks.check_s3(event)
     if resource_type == "ebs":
-        findings += ec2_checks.check_ebs(event)
+        findings += ebs_checks.check_ebs(event)
     if resource_type == "ec2":
         findings += ec2_checks.check_ec2(event)
     if resource_type == "rds":
@@ -35,11 +35,11 @@ def identify_resource_type(event):
 
     if "s3" in source:
         return "s3"
-    elif "ec2" in source:
+    if "ec2" in source:
         if any(x in event_name for x in ["createvolume", "deletevolume", "modifyvolume", "attachvolume", "detachvolume"]):
             return "ebs"
         else:
             return "ec2"
-    elif "rds" in source:
+    if "rds" in source:
         return "rds"
     return None

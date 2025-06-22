@@ -10,14 +10,30 @@ def check_rds(event):
 
     for db in response['DBInstances']:
         db_id = db['DBInstanceIdentifier']
-        is_public = db.get('PubliclyAccessible', False)
 
-        findings.append({
-            "ResourceId": db_id,
-            "CheckType": "RDSPublicAccess",
-            "Passed": not is_public,
-            "Details": "Publicly accessible" if is_public else "Not publicly accessible",
-            "Timestamp": datetime.utcnow().isoformat()
-        })
+        if db['PubliclyAccessible']:
+            findings.append({
+                "ResourceId": db_id,
+                "CheckType": "RDSPublicAccess",
+                "Passed": False,
+                "Details": "Publicly accessible database",
+                "Timestamp": datetime.utcnow().isoformat()
+            })
+        if not db['StorageEncrypted']:
+            findings.append({
+                "ResourceId": db_id,
+                "CheckType": "RDSEncryption",
+                "Passed": False,
+                "Details": "Storage encryption is not enabled",
+                "Timestamp": datetime.utcnow().isoformat()
+            })
+        if not db.get('IAMDatabaseAuthenticationEnabled', False):
+            findings.append({
+                "ResourceId": db_id,
+                "CheckType": "RDSIAMAuth",
+                "Passed": False,
+                "Details": "IAM DB authentication is not enabled",
+                "Timestamp": datetime.utcnow().isoformat()
+            })
 
     return findings

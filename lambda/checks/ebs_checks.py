@@ -8,9 +8,9 @@ def check_ebs(event):
     findings = []
 
     for volume in response['Volumes']:
-        volume_id = volume['VolumeId']
-        encrypted = volume['Encrypted']
-        az = volume['AvailabilityZone']
+        volume_id = volume.get('VolumeId', "Unknown Volume")
+        encrypted = volume.get('Encrypted', False)
+        az = volume.get('AvailabilityZone', "Unknown AZ")
         attachments = volume.get('Attachments', [])
         instance_id = attachments[0]['InstanceId'] if attachments else "Not attached"
 
@@ -23,5 +23,5 @@ def check_ebs(event):
                 "Timestamp": datetime.utcnow().isoformat()
             })
         findings.append(finding)
-        
+
     return findings

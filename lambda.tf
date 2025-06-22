@@ -23,6 +23,7 @@ resource "aws_iam_policy" "lambda_security_policy"{
             Action = [
             "ec2:DescribeInstances",
             "ec2:DescribeSecurityGroups",
+            "ec2:DescribeVolumes",
             "rds:DescribeDBInstances",
             "s3:GetBucket*",
             "s3:ListBucket",

@@ -6,9 +6,6 @@ ec2 = boto3.client('ec2')
 def check_ec2(event):
     sg_response = ec2.describe_security_groups()
     instance_response = ec2.describe_instances()
-    print(sg_response)
-    print("***********")
-    print(instance_response)
 
     findings = []
     sg_to_instance = {}

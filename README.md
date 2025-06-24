@@ -4,9 +4,9 @@
 
 This project is an **Event-driven AWS cloud security audit system** designed to run scheduled scans for finding common misconfigurations across AWS resources, including:
 
-- **S3 Buckets** (e.g., public access, encryption)
-- **EC2 Instances** (e.g., sensitive ports exposure)
-- **RDS Databases** (e.g., public access, encryption checks)
+- **S3 Buckets** (e.g., public access, encryption, versioning, overly permissive policies )
+- **EC2 Instances** (e.g., sensitive ports exposure, like SSH)
+- **RDS Databases** (e.g., public access, encryption checks, IAM auth)
 - **EBS Volumes** (e.g., unencrypted volumes)
 
 It uses **AWS Lambda**, **EventBridge**, **SNS**, and **DynamoDB**, all managed with **Terraform Infrastructure as Code (IaC)**.
@@ -40,7 +40,7 @@ terraform apply
 
 ## 🚀 Features
 
-- ✅ Automated and scheduled security checks (every 10 minutes or daily)
+- ✅ Automated and scheduled security checks (Daily at 5pm UTC)
 - 📝 Findings stored in DynamoDB for tracking and audit
 - 📬 Real-time alerts sent to security teams via SNS
 - 🔐 KMS encryption for findings stored in DynamoDB table

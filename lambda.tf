@@ -42,6 +42,30 @@ resource "aws_iam_policy" "lambda_security_policy"{
         ]
     })
 }
+resource "aws_iam_policy" "lambda_kms_policy" {
+  name = "lambda-kms-access-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement: [
+      {
+        Effect: "Allow",
+        Action: [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey"
+        ],
+        Resource: aws_kms_key.lambda_key.arn
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_kms_attach" {
+  role       = aws_iam_role.lambda_exec_role.name
+  policy_arn = aws_iam_policy.lambda_kms_policy.arn
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_security_policy_attachment" {
   policy_arn = aws_iam_policy.lambda_security_policy.arn
   role       = aws_iam_role.lambda_exec_role.name
